@@ -1,0 +1,9 @@
+{
+  "name": "Snow & Ice Log",
+  "short_name": "Snow Log",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#eef2f5",
+  "theme_color": "#1f6f9a",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

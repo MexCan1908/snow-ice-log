@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Snow &amp; Ice Log</title>
+<meta name="theme-color" content="#1f6f9a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap" id="gate" hidden>
+  <div class="gate panel">
+    <div class="eyebrow">Staff access</div>
+    <h1>Snow &amp; Ice Log</h1>
+    <p class="muted" style="margin:0">Enter the staff PIN from your superintendent. This phone will remember it.</p>
+    <form id="pin-f" autocomplete="off">
+      <label>Staff PIN<input id="pin" type="password" inputmode="numeric" required></label>
+      <button type="submit" id="pin-go">Open log</button>
+    </form>
+    <span class="msg" id="pin-msg" role="status"></span>
+  </div>
+</div>
+
+<div class="wrap" id="app" hidden>
+  <div class="setup" id="setup" hidden>Setup isn't finished: <code>scriptUrl</code> in <code>config.js</code> is empty, so entries can't be saved yet. See the README.</div>
+  <header>
+    <div>
+      <div class="eyebrow"><span id="bldg">Toronto</span> · Winter operations</div>
+      <h1>Snow &amp; Ice Log</h1>
+    </div>
+    <div class="status" id="status">Connecting to log…</div>
+  </header>
+
+  <section class="panel" aria-labelledby="q-h">
+    <div class="panel-head"><h2 id="q-h">Quick log</h2><span class="who" id="who">Tap one, pick the area, save</span></div>
+    <div class="quick">
+      <button type="button" data-q="patrol">Patrol · all clear</button>
+      <button type="button" data-q="salt">Salted</button>
+      <button type="button" data-q="plow">Plowed / shovelled</button>
+      <button type="button" data-q="hazard" class="q-crit">Report hazard</button>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="fc-h">
+    <div class="panel-head">
+      <h2 id="fc-h">7-day outlook &amp; action flags</h2>
+      <span class="eyebrow" id="fc-asof">Forecast loading</span>
+    </div>
+    <div class="fc" id="fc"><div class="empty">Loading the forecast…</div></div>
+    <p class="fc-note">Flags: <span class="chip crit">Plow / shovel</span> 2 cm or more of snow · <span class="chip warn">Pre-salt</span> light snow · <span class="chip warn">Refreeze</span> temps cross 0 °C · <span class="chip crit">Freezing rain</span> rain with lows at or below 0 °C · <span class="chip info">Deep cold</span> rock salt weak below −10 °C. Source: Open-Meteo, updates each time the page loads.</p>
+  </section>
+
+  <div class="grid2">
+    <section class="panel" aria-labelledby="log-h">
+      <div class="panel-head"><h2 id="log-h">Log an entry</h2><span class="eyebrow">Time-stamped record</span></div>
+      <form id="f" autocomplete="off">
+        <div class="fields">
+          <label>Date &amp; time<input id="f-ts" type="datetime-local" required></label>
+          <label>Entry type
+            <select id="f-type" required>
+              <option>Inspection / patrol</option>
+              <option>Plowing</option>
+              <option>Shovelling</option>
+              <option>Salt / de-icer applied</option>
+              <option>Sand / grit applied</option>
+              <option>Hazard reported</option>
+              <option>Resident complaint</option>
+              <option>Slip / fall incident</option>
+              <option>Contractor visit</option>
+            </select>
+          </label>
+          <label>Area
+            <select id="f-area" required>
+              <option>Main entrance &amp; walkway</option>
+              <option>Public sidewalk</option>
+              <option>Garage ramp</option>
+              <option>Parking garage / P1</option>
+              <option>Surface parking lot</option>
+              <option>Fire route</option>
+              <option>Emergency exits &amp; stairs</option>
+              <option>Loading dock</option>
+              <option>Garbage / recycling area</option>
+              <option>Accessible ramp</option>
+              <option>Roof / balconies</option>
+            </select>
+          </label>
+          <label>Surface condition
+            <select id="f-cond" required>
+              <option>Clear &amp; dry</option>
+              <option>Wet</option>
+              <option>Slush</option>
+              <option>Snow under 2 cm</option>
+              <option>Snow 2 cm or more</option>
+              <option>Ice / black ice</option>
+              <option>Icicles overhead</option>
+            </select>
+          </label>
+          <label>Material used
+            <select id="f-mat">
+              <option value="">None</option>
+              <option>Rock salt (NaCl)</option>
+              <option>Calcium chloride</option>
+              <option>Magnesium chloride</option>
+              <option>Pet-safe blend</option>
+              <option>Sand / grit</option>
+              <option>Brine (pre-treat)</option>
+            </select>
+          </label>
+          <label>Quantity (kg)<input id="f-qty" type="number" min="0" step="0.5" inputmode="decimal" placeholder="0"></label>
+          <label>Air temp (°C)<input id="f-temp" type="number" step="0.5" inputmode="decimal" placeholder="e.g. −4"></label>
+          <label>Done by<input id="f-by" type="text" placeholder="Name or contractor" required></label>
+          <label class="full">Notes<textarea id="f-notes" placeholder="What you saw, what you did, who was told. For an incident: who, when, witnesses, photos taken."></textarea></label>
+          <label class="check full"><input id="f-open" type="checkbox"> Keep this open as a hazard until someone marks it resolved</label>
+        </div>
+        <div class="actions"><button type="submit" id="f-save">Save entry</button><button type="button" class="ghost" id="f-now">Set to now</button><span class="msg" id="f-msg" role="status"></span></div>
+      </form>
+    </section>
+
+    <section class="panel" aria-labelledby="hz-h">
+      <div class="panel-head"><h2 id="hz-h">Open hazards</h2><span class="eyebrow" id="hz-count">—</span></div>
+      <div class="hz" id="hz"><div class="empty">No open hazards. Entries marked as hazards, complaints and slip/fall incidents stay here until resolved.</div></div>
+      <div class="stats" id="season"></div>
+    </section>
+  </div>
+
+  <section class="panel" aria-labelledby="rp-h">
+    <div class="panel-head"><h2 id="rp-h">Report</h2><span class="eyebrow">For the board, insurer or property manager</span></div>
+    <div class="filters">
+      <div class="seg" role="group" aria-label="Date range">
+        <button type="button" data-r="1" class="small">Last 24 h</button>
+        <button type="button" data-r="7" class="small" aria-pressed="true">Last 7 days</button>
+        <button type="button" data-r="30" class="small">Last 30 days</button>
+        <button type="button" data-r="season" class="small">This season</button>
+      </div>
+      <label>From<input id="r-from" type="date"></label>
+      <label>To<input id="r-to" type="date"></label>
+      <label>Area
+        <select id="r-area"><option value="">All areas</option></select>
+      </label>
+    </div>
+    <div class="rstats" id="rstats"></div>
+    <div class="tbl"><table>
+      <thead><tr><th>When</th><th>Type</th><th>Area</th><th>Condition</th><th>Material</th><th>kg</th><th>°C</th><th>By</th><th>Notes</th><th>Status</th></tr></thead>
+      <tbody id="rows"><tr><td colspan="10" class="muted">No entries in this range yet. Log the first patrol above.</td></tr></tbody>
+    </table></div>
+    <div class="actions" style="margin-top:12px">
+      <button type="button" id="copy">Copy report text</button>
+      <button type="button" class="ghost" id="csv">Download CSV</button>
+      <span class="msg" id="r-msg" role="status"></span>
+    </div>
+    <textarea id="copybox" hidden readonly style="margin-top:10px;min-height:160px;font-family:var(--f-mono);font-size:.8rem"></textarea>
+  </section>
+
+  <section class="panel" aria-labelledby="ref-h">
+    <div class="panel-head"><h2 id="ref-h">Why the log matters</h2><span class="eyebrow">Check current text before relying on it</span></div>
+    <div class="ref">
+      <div><b>Sidewalk clearing</b>Clear adjacent sidewalks of snow and ice within 12 hours after a snowfall ends, where the City does not plow them.<div class="cite">Toronto Municipal Code Ch. 719</div></div>
+      <div><b>Duty of care</b>The corporation must take reasonable care that people on the property are safe. Dated patrol and salt records are the main evidence of that care.<div class="cite">Occupiers' Liability Act, R.S.O. 1990, c. O.2, s. 3</div></div>
+      <div><b>60-day notice</b>A person hurt on snow or ice must give written notice within 60 days. Keep incident entries, photos and weather for each date.<div class="cite">Occupiers' Liability Act, s. 6.1</div></div>
+      <div><b>Fire routes &amp; exits</b>Keep fire department access routes and exit paths, including exterior exit doors and stairs, clear of snow and ice.<div class="cite">Ontario Fire Code, O. Reg. 213/07, Div. B, 2.5.1 &amp; 2.7.1</div></div>
+    </div>
+  </section>
+</div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
