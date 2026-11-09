@@ -53,7 +53,7 @@ Send staff the link. On their phone:
 
 ## Changing things later
 
-- **No PIN:** the app doesn't ask for one. If an older copy of `Code.gs` is deployed and the app says the script "still requires a PIN", paste in the current `Code.gs` and deploy a new version, or delete the `STAFF_PIN` Script Property.
+- **No PIN:** the app doesn't ask for one. If an older copy of `Code.gs` is deployed and the app says the script "still requires a PIN", paste in the current `Code.gs` and deploy a new version.
 - **Change the script**: after editing `Code.gs`, use **Deploy → Manage deployments → Edit (pencil) → Version: New version → Deploy**. This keeps the same URL.
 - **Records**: the Google Sheet is the master record. Download it or share it read-only with the property manager or insurer.
 
