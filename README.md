@@ -2,7 +2,7 @@
 
 A phone-friendly snow and ice log for condo staff. Staff record patrols, plowing, salting, hazards and slip/fall incidents. Entries are saved to a Google Sheet you own. The 7-day forecast for the building loads live from [Open-Meteo](https://open-meteo.com) and flags days that need plowing, pre-salting or refreeze watch.
 
-Hosted free on GitHub Pages. Staff need no accounts, only a staff PIN.
+Hosted free on GitHub Pages. Staff just open the link; no accounts or PIN.
 
 ## Files
 
@@ -20,14 +20,10 @@ Hosted free on GitHub Pages. Staff need no accounts, only a staff PIN.
 1. Go to [sheets.new](https://sheets.new) and name the sheet **Snow & Ice Log**.
 2. Click **Extensions → Apps Script**.
 3. Delete the sample code, paste in everything from `apps-script/Code.gs`, and click **Save**.
-4. Click **Project Settings** (gear icon) → **Script Properties** → **Add script property**:
-   - Property: `STAFF_PIN`
-   - Value: the PIN staff will type, e.g. `4827`
-   - Click **Save script properties**.
-5. Click **Deploy → New deployment**. Choose type **Web app**, then set:
+4. Click **Deploy → New deployment**. Choose type **Web app**, then set:
    - Execute as: **Me**
    - Who has access: **Anyone**
-6. Click **Deploy**, approve the permissions prompt, and copy the **Web app URL**. It ends in `/exec`.
+5. Click **Deploy**, approve the permissions prompt, and copy the **Web app URL**. It ends in `/exec`.
 
 The script creates a **Log** tab the first time someone saves an entry.
 
@@ -50,23 +46,21 @@ In the repository on GitHub, go to **Settings → Pages**. Under **Build and dep
 
 ### 4. Give it to staff
 
-Send staff the link and the PIN. On their phone:
+Send staff the link. On their phone:
 
 - **iPhone (Safari):** Share → **Add to Home Screen**
 - **Android (Chrome):** ⋮ menu → **Add to Home screen**
 
-Each phone remembers the PIN after the first time.
-
 ## Changing things later
 
-- **New PIN** (for example, when someone leaves): change `STAFF_PIN` in Script Properties. Every phone is asked for the new PIN on its next load.
+- **No PIN:** the app doesn't ask for one. If an older copy of `Code.gs` is deployed and the app says the script "still requires a PIN", paste in the current `Code.gs` and deploy a new version, or delete the `STAFF_PIN` Script Property.
 - **Change the script**: after editing `Code.gs`, use **Deploy → Manage deployments → Edit (pencil) → Version: New version → Deploy**. This keeps the same URL.
 - **Records**: the Google Sheet is the master record. Download it or share it read-only with the property manager or insurer.
 
 ## Security notes
 
-- The repository is public, so anyone can see the app's code and the Google Script URL. Without the PIN they can't read or add entries.
-- The PIN is shared by all staff and is not a personal login. The **Done by** field records who did each task.
+- The repository is public and the app has no PIN, so anyone who finds the site or the Google Script URL can read the log and add entries. Keep the link among staff, and check the Sheet now and then for entries that don't belong.
+- The **Done by** field records who did each task; it is not a login.
 - Don't put personal health details in incident notes. Record what happened and where, and keep injury details in your formal incident report.
 
 ## Legal references

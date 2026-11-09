@@ -9,7 +9,7 @@ const store = {
   set(k,v){ try { localStorage.setItem(k,v); } catch(_) {} },
   del(k){ try { localStorage.removeItem(k); } catch(_) {} }
 };
-let entries = [], range = {from:null,to:null}, pin = store.get("sil-pin") || "";
+let entries = [], range = {from:null,to:null};
 
 /* ---------- helpers ---------- */
 const pad = n => String(n).padStart(2,"0");
@@ -24,10 +24,10 @@ async function api(method, payload){
   if(!CFG.scriptUrl) throw {code:"no_backend"};
   let res;
   if(method === "GET"){
-    res = await fetch(CFG.scriptUrl + "?pin=" + encodeURIComponent(pin) + "&t=" + Date.now());
+    res = await fetch(CFG.scriptUrl + "?t=" + Date.now());
   } else {
     // text/plain avoids a CORS preflight, which Apps Script doesn't answer.
-    res = await fetch(CFG.scriptUrl, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify(Object.assign({pin}, payload))});
+    res = await fetch(CFG.scriptUrl, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify(payload)});
   }
   if(!res.ok) throw {code:"network"};
   const out = await res.json();
@@ -42,7 +42,7 @@ async function load(){
     renderAll();
     return true;
   }catch(e){
-    if(e.code === "bad_pin"){ lock("That PIN didn't work. Check with your superintendent."); return false; }
+    if(e.code === "bad_pin"){ $("#status").textContent = "The Google Script still requires a PIN · update Code.gs (see README)"; return true; }
     if(e.code === "no_backend"){ $("#status").textContent = "Not connected to a Google Sheet yet"; return true; }
     $("#status").textContent = "Couldn't reach the log · showing last loaded";
     return true;
@@ -211,7 +211,7 @@ $("#f").addEventListener("submit", async ev => {
   }catch(err){
     msg.className = "msg err";
     msg.textContent = err.code === "no_backend" ? "Not connected to the Google Sheet yet, so this entry wasn't saved."
-      : err.code === "bad_pin" ? "The staff PIN has changed. Reload and enter the new one."
+      : err.code === "bad_pin" ? "The Google Script still asks for a PIN. Update Code.gs as described in the README."
       : "Couldn't save. Check your connection and try again; the entry is still in the form.";
   }finally{ $("#f-save").disabled = false; }
 });
@@ -248,26 +248,11 @@ $("#csv").onclick = () => {
 };
 setRange(7);
 
-/* ---------- PIN gate & startup ---------- */
-function lock(message){
-  store.del("sil-pin"); pin = "";
-  $("#app").hidden = true; $("#gate").hidden = false;
-  $("#pin-msg").className = "msg err"; $("#pin-msg").textContent = message || "";
-  $("#pin").focus();
-}
-let poll = null;
-async function open(){
-  $("#gate").hidden = true; $("#app").hidden = false;
-  loadForecast();
-  if(await load()){
-    store.set("sil-pin", pin);
-    clearInterval(poll); poll = setInterval(() => { if(!document.hidden) load(); }, 60000);
-  }
-}
+/* ---------- startup ---------- */
 $("#bldg").textContent = CFG.building || "Toronto";
-if(!CFG.scriptUrl){ $("#setup").hidden = false; open(); }
-else if(pin){ open(); }
-else { $("#gate").hidden = false; }
-$("#pin-f").addEventListener("submit", ev => { ev.preventDefault(); pin = $("#pin").value.trim(); $("#pin-msg").textContent = ""; open(); });
-document.addEventListener("visibilitychange", () => { if(!document.hidden && pin) load(); });
+if(!CFG.scriptUrl) $("#setup").hidden = false;
+loadForecast();
+load();
+setInterval(() => { if(!document.hidden) load(); }, 60000);
+document.addEventListener("visibilitychange", () => { if(!document.hidden) load(); });
 })();

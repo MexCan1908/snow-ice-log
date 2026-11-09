@@ -107,8 +107,6 @@ tr:last-child td{border-bottom:none}
 .quick button.q-crit{border-left-color:var(--crit)}
 .quick button:hover{background:var(--ice-soft)}
 .who{font-size:.85rem;color:var(--muted)}
-.gate{max-width:420px;margin:12vh auto 0;display:grid;gap:14px}
-.gate form{grid-template-columns:1fr auto;align-items:end}
 .setup{border-left:4px solid var(--warn);background:var(--warn-soft);padding:12px 14px;border-radius:4px;font-size:.9rem}
 html{background:var(--bg)}
 body{margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}

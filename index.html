@@ -15,20 +15,7 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="wrap" id="gate" hidden>
-  <div class="gate panel">
-    <div class="eyebrow">Staff access</div>
-    <h1>Snow &amp; Ice Log</h1>
-    <p class="muted" style="margin:0">Enter the staff PIN from your superintendent. This phone will remember it.</p>
-    <form id="pin-f" autocomplete="off">
-      <label>Staff PIN<input id="pin" type="password" inputmode="numeric" required></label>
-      <button type="submit" id="pin-go">Open log</button>
-    </form>
-    <span class="msg" id="pin-msg" role="status"></span>
-  </div>
-</div>
-
-<div class="wrap" id="app" hidden>
+<div class="wrap" id="app">
   <div class="setup" id="setup" hidden>Setup isn't finished: <code>scriptUrl</code> in <code>config.js</code> is empty, so entries can't be saved yet. See the README.</div>
   <header>
     <div>

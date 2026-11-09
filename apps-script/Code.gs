@@ -2,7 +2,7 @@
  * Snow & Ice Log — Google Sheets backend.
  *
  * Paste this into Extensions → Apps Script in the Google Sheet that should hold the log.
- * Set the staff PIN under Project Settings → Script Properties: key STAFF_PIN.
+ * Optional: to require a PIN, add Script Property STAFF_PIN. With no STAFF_PIN set, no PIN is needed.
  * Deploy → New deployment → Web app → Execute as: Me, Who has access: Anyone.
  */
 
@@ -28,7 +28,8 @@ function json_(obj) {
 
 function pinOk_(pin) {
   const expected = PropertiesService.getScriptProperties().getProperty('STAFF_PIN');
-  return !!expected && String(pin || '') === String(expected);
+  if (!expected) return true; // no PIN configured: open access
+  return String(pin || '') === String(expected);
 }
 
 function clean_(v, max) {
